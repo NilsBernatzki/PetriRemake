@@ -33,11 +33,13 @@ public class Player : MonoBehaviour {
     private float maxMeasuredVeloMag;
     public float currentVeloT;
 
-    
+
 
     [Header("Snack")]
+   
     public float snackAngle;
     private MovePlayer movement;
+    public Transform aimCircle;
     public List<Enemy> closeEnemies = new List<Enemy>();
     public List<Enemy> enemiesInAngle = new List<Enemy>();
     public bool snacking;
@@ -47,7 +49,6 @@ public class Player : MonoBehaviour {
     void Start () {
         rig = GetComponent<Rigidbody2D>();
         movement = GetComponent<MovePlayer>();
-
         health = maxHealth;
         healthText.text = health.ToString();
         rig.AddForce(Vector2.down);
@@ -66,6 +67,8 @@ public class Player : MonoBehaviour {
         UpdatePenaltyArea();
         UpdateMaxMeasuredVelo();
 
+
+
         enemiesInAngle.Clear();
         if (closeEnemies.Count > 0) {
             Vector3 pos = transform.position;
@@ -78,7 +81,7 @@ public class Player : MonoBehaviour {
         }
 
     }
-   
+    
     private void FireEventPlayerDied() {
         if(PlayerDied != null) {
             PlayerDied();
@@ -103,32 +106,68 @@ public class Player : MonoBehaviour {
         updateGraphFrameCounter++;
 
         if(WaitedEnoughFrames(ref updateGraphFrameCounter, updateGraphFrameCount)){
-            
-            if (SwarmManager.singleton.playerIsHunted || SwarmManager.singleton.playerMadeEnemysFlee) {
-                Vector3 penaltyPos;
-                Bounds myBounds;
-                GraphUpdateObject guo;
 
+            Vector3 penaltyPos = transform.position;
+
+            Bounds resetBounds;
+            GraphUpdateObject resetGuo;
+
+            resetBounds = new Bounds(penaltyPos, boundsSize * 10f);
+            resetGuo = new GraphUpdateObject(resetBounds);
+
+            resetGuo.resetPenaltyOnPhysics = true;
+            resetGuo.requiresFloodFill = false;
+
+            resetGuo.addPenalty = 0;
+
+            AstarPath.active.UpdateGraphs(resetGuo);
+
+            if (SwarmManager.singleton.playerIsHunted || SwarmManager.singleton.playerMadeEnemysFlee) {
+
+                Bounds penaltyBounds; 
+                GraphUpdateObject guo;
+                               
                 if (SwarmManager.singleton.playerIsHunted) {
-                    penaltyPos = transform.position + (-transform.up * 0.75f);
-                    myBounds = new Bounds(penaltyPos, boundsSize);
-                    //DebugPenaltyPos(penaltyPos, Color.red);
-                    guo = new GraphUpdateObject(myBounds);
-                    guo.addPenalty = 500;
-                    guo.updatePhysics = true;
+                    penaltyPos = transform.position + (-transform.up * 0.5f);
+
+                    penaltyBounds = new Bounds(penaltyPos, boundsSize);
+                    
+                    guo = new GraphUpdateObject(penaltyBounds);
+                   
+                    guo.resetPenaltyOnPhysics = true;
+                    guo.requiresFloodFill = false;
+                    
+                    guo.addPenalty = 1000;
+                    
                     AstarPath.active.UpdateGraphs(guo);
                     return;
                 }
                 
                 if (SwarmManager.singleton.playerMadeEnemysFlee) {
-                    penaltyPos = transform.position + (transform.up * 0.75f);
-                    myBounds = new Bounds(penaltyPos, boundsSize);
-                    myBounds.Expand(1.5f);
-                    //DebugPenaltyPos(penaltyPos, Color.blue);
-                    guo = new GraphUpdateObject(myBounds);
-                    guo.addPenalty = 50000;
-                    guo.updatePhysics = true;
+
+                    penaltyPos = transform.position + (transform.up * 1.5f);
+                    penaltyBounds = new Bounds(penaltyPos, boundsSize);
+                    penaltyBounds.Expand(2.75f);
+
+                    guo = new GraphUpdateObject(penaltyBounds);
+                    guo.resetPenaltyOnPhysics = false;
+                    guo.requiresFloodFill = false;
+
+                    guo.addPenalty = 25000;
                     AstarPath.active.UpdateGraphs(guo);
+
+                    penaltyPos = transform.position; ;
+                    Bounds penaltyBoundsAtPlayer = new Bounds(penaltyPos, boundsSize);
+                    penaltyBoundsAtPlayer.Expand(1.2f);
+
+                    GraphUpdateObject guoPlayer = new GraphUpdateObject(penaltyBoundsAtPlayer);
+
+                    guoPlayer.resetPenaltyOnPhysics = false;
+                    guoPlayer.requiresFloodFill = false;
+
+                    guoPlayer.addPenalty = 50000;
+
+                    AstarPath.active.UpdateGraphs(guoPlayer);
                 }
                 
             }
@@ -166,10 +205,13 @@ public class Player : MonoBehaviour {
         health -= Mathf.Pow(damage,1.5f);
         rig.AddForce((transform.position - hitPoint).normalized * damage * 100);
         movement.ClampVelocity();
-        StartCoroutine(RecoverFromDamage());
+        StartCoroutine(RecoverFromDamage(damage));
     }
-    private IEnumerator RecoverFromDamage() {
-        yield return new WaitForSeconds(0.5f);
+    private IEnumerator RecoverFromDamage(float damage) {
+        float dmgT = damage / SwarmManager.singleton.maxGroupSize;
+        if (dmgT >= 0.3f) {
+            yield return new WaitForSeconds(dmgT*1.5f);
+        }
         playerDamaged = false;
     }
     private void OnTriggerEnter2D(Collider2D c) {
@@ -188,9 +230,10 @@ public class Player : MonoBehaviour {
     private void OnCollisionEnter2D(Collision2D collision) {
         if (collision.collider.CompareTag("Enemy")) {
             Enemy e = collision.collider.transform.parent.GetComponent<Enemy>();
-            if(e == movement.closestEnemy) {
+            if(e.isDead && e == movement.closestEnemy) {
                 e.GetSnacked();
                 movement.closestEnemy = null;
+                movement.grabbedEnemy = false;
             }
         }
     }

@@ -50,6 +50,10 @@ public class Groupable : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+        if(leader == null) {
+            ResetMySelf();
+            return;
+        }
         maxGroupCount = SwarmManager.singleton.currentMaxGroupSize;
         if (!triggerCollider.enabled && !reseting) {
             reseting = true;

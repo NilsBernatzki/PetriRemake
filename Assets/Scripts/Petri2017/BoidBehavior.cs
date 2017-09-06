@@ -15,6 +15,7 @@ public class BoidBehavior : MonoBehaviour {
         float dist;
 
         foreach (Groupable thisG in g.neighbors) {
+            if (!thisG) continue;
             dir = pos - thisG.transform.position;
             dist = dir.magnitude;
             if(dist < minDist) {
@@ -29,6 +30,7 @@ public class BoidBehavior : MonoBehaviour {
         Vector3 centreForce = Vector3.zero;
 
         foreach (Groupable thisG in g.neighborsInGroup) {
+            if (!thisG) continue;
             centreForce += thisG.transform.position;
         }
         if(g.neighborsInGroup.Count != 0) {

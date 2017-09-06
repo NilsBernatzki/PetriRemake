@@ -83,6 +83,8 @@ public class Enemy : MonoBehaviour {
     public float currentCharge;
 
     public bool charged;
+    public float chargeTimer;
+    public float chargedTime;
 
     [Header("Detection")]
     [SerializeField]
@@ -133,7 +135,7 @@ public class Enemy : MonoBehaviour {
         maxSightAngle /= 2;
         maxVelocity = maxVelocity / 100f;
         currentState = idleState;
-
+        chargeTimer = chargedTime;
         currentEnergy = maxEnergy;
         emptyCol = SwarmManager.singleton.emptyEnergyColor;
         fullCol = SwarmManager.singleton.fullEnergyColor;
@@ -249,7 +251,8 @@ public class Enemy : MonoBehaviour {
                 currentEnergy -= loosePerSecHunt * Time.deltaTime;
                 break;
             case Behavior.flee:
-                currentEnergy -= loosePerSecFlee * Time.deltaTime;
+                //currentEnergy -= loosePerSecFlee * Time.deltaTime;
+                currentEnergy += restorePerSec * Time.deltaTime;
                 break;
         }
 
@@ -296,6 +299,7 @@ public class Enemy : MonoBehaviour {
             charged = true;
         } else {
             charged = false;
+            groupable.leader.enemy.chargeTimer += Time.deltaTime/2;
         }
 
         updateChargeFrameCounter++;
@@ -336,6 +340,7 @@ public class Enemy : MonoBehaviour {
         //Debug.Log("Shock" + "dmg: " + currentCharge);
         foreach (Groupable g in groupable.group) {
             g.enemy.charged = false;
+            g.enemy.chargeTimer = 0;
         }
         
 
@@ -349,6 +354,9 @@ public class Enemy : MonoBehaviour {
         transform.GetChild(0).GetComponent<CircleCollider2D>().enabled = false;
         rig.MovePosition(GameManager.singleton.transform.GetChild(0).position);
         currentState.OnExit();
+        SwarmManager.singleton.currentEnemyCount--;
+        GameManager.singleton.score++;
+
         Destroy(this.gameObject, 5f);
     }
     //################ Detection ##################

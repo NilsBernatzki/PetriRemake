@@ -61,18 +61,17 @@ public class DetectionState : State {
         if (firstDetectionTimer >= firstDetectionTime * minT) {
             firstDetectionTimer = 0;
 
-            groupable.leader.enemy.charged = true;
-
-            //Chose Behavior
-            float tGroup = (float)groupable.leader.group.Count / (float)SwarmManager.singleton.currentMaxGroupSize;
-            //float tRandom = tGroup * Random.Range(tGroup, 1);
+            if(groupable.leader.enemy.chargeTimer >= enemy.chargedTime){
+                groupable.leader.enemy.charged = true;
+            }
             
-            if (tGroup >= Random.Range(0.25f,1f)) {
-                if (enemy.playerInSight) {
+            //Chose Behavior
+            float tGroup = (float)groupable.leader.group.Count / (float)SwarmManager.singleton.maxGroupSize;
+            
+            if (tGroup >= Random.Range(0.25f,1.25f)) {
+                if (groupable.leader.enemy.charged) {
                     groupable.leader.enemy.ChangeBehavior(Behavior.hunt);
-                } else {
-                    groupable.leader.enemy.ChangeBehavior(Behavior.stalking);
-                }
+                } 
             } else {
                 groupable.leader.enemy.ChangeBehavior(Behavior.flee);
             }

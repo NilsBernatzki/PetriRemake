@@ -21,7 +21,9 @@ public class SwarmManager : MonoBehaviour {
     public static SwarmManager singleton;
     [SerializeField]
     private GameObject enemyPrefab;
-    
+    public int maxEnemyCount;
+    public int currentEnemyCount;
+
     [Header("Boids")]
     [SerializeField]
     private int amountEnemysOnStart;
@@ -55,6 +57,9 @@ public class SwarmManager : MonoBehaviour {
     public Color chargedColor;
     public Color unchargedColor;
 
+    private WaitForEndOfFrame waitFrame;
+    private WaitForSeconds waitSeconds;
+
     private void Awake() {
         singleton = this;
     }
@@ -63,8 +68,15 @@ public class SwarmManager : MonoBehaviour {
         if (debugEnergyMode) {
             debugGroupsMode = false;
         }
+        waitFrame = new WaitForEndOfFrame();
+        waitSeconds = new WaitForSeconds(1f);
+
         positions = GetComponentsInChildren<Transform>();
-        StartCoroutine(EnemySpawner(amountEnemysOnStart));
+        //StartCoroutine(EnemySpawner(GameManager.singleton.currentState.maxEnemies));
+        currentMaxGroupSize = GameManager.singleton.currentState.currentMaxGroupSize;
+        //maxGroupSize = GameManager.singleton.gameStates[GameManager.singleton.gameStates.Count].currentMaxGroupSize;
+        maxGroupSize = GameManager.singleton.gameStates.Last().currentMaxGroupSize;
+        StartCoroutine(UpdateToCurrentState());
 	}
 	
 	// Update is called once per frame
@@ -79,8 +91,29 @@ public class SwarmManager : MonoBehaviour {
         for (int i = 0; i < amount; i++) {
             GameObject enemy = Instantiate(enemyPrefab, (Vector2)positions[Random.Range(0,positions.Length)].position + Random.insideUnitCircle * 2f, Quaternion.identity);
             groupables.Add(enemy.GetComponent<Groupable>());
+            currentEnemyCount++;
             yield return new WaitForSeconds(0.2f);
         }
+    }
+
+    private IEnumerator UpdateToCurrentState() {
+        yield return waitFrame;
+        while (true) {
+            
+            GameState currentState = GameManager.singleton.currentState;
+            currentMaxGroupSize = currentState.currentMaxGroupSize;
+
+            if(currentEnemyCount < currentState.maxEnemies) {
+                SpawnEnemy();
+            }
+            yield return waitSeconds;
+        }
+    }
+
+    private void SpawnEnemy() {
+        GameObject enemy = Instantiate(enemyPrefab, (Vector2)positions[Random.Range(0, positions.Length)].position + Random.insideUnitCircle * 2f, Quaternion.identity);
+        groupables.Add(enemy.GetComponent<Groupable>());
+        currentEnemyCount++;
     }
     public Groupable GetGroupableFromID(float id) {
         Groupable thisG = groupables.Find(g => g.id == id);

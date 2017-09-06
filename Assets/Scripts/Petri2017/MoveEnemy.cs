@@ -35,7 +35,7 @@ public class MoveEnemy : MonoBehaviour {
         speed *= GameManager.singleton.gameSpeedMult;
         Vector3 dir = towards - enemy.GetCurrentPosition();
 
-        if (groupable.neighbors.Count > 0) {
+        if (groupable.neighbors.Count > 0 && Random.Range(0f,1f) > 0.35f) {
             Vector3 seperation = boidBehavior.SeparationGroup(groupable);
             Vector3 cohesion = boidBehavior.CohesionGroup(groupable, dir);
 
@@ -43,7 +43,7 @@ public class MoveEnemy : MonoBehaviour {
             rig.AddForce((Vector2)cohesion * SwarmManager.singleton.boidCohesionForce);
         }
 
-        dir = dir.normalized * speed * Time.fixedDeltaTime;
+        dir = dir.normalized * speed * Time.fixedDeltaTime * (1 + Mathf.Pow(groupable.leader.group.Count / (SwarmManager.singleton.maxGroupSize * 1.5f),2));
         rig.AddForce((Vector2)dir);
         RotateTowardsVector((Vector3)rig.velocity);
     }
@@ -61,7 +61,7 @@ public class MoveEnemy : MonoBehaviour {
                 rig.AddForce((Vector2)cohesion * SwarmManager.singleton.boidCohesionForce);
             }
         }
-        dir = dir.normalized * speed * Time.fixedDeltaTime;
+        dir = dir.normalized * speed * Time.fixedDeltaTime * (1 + Mathf.Pow(groupable.leader.group.Count / (SwarmManager.singleton.maxGroupSize * 2), 2));
         rig.AddForce((Vector2)dir);
         RotateTowardsVector((Vector3)rig.velocity);
     }

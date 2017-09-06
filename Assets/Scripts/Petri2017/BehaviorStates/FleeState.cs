@@ -49,7 +49,12 @@ public class FleeState : State {
         
         //Leader : find fleePos
         if (groupable.IsLeader()) {
-            
+
+            if (enemy.chargeTimer > enemy.chargedTime) {
+                enemy.charged = true;
+            }
+
+
             if (enemy.fleePosition == Vector3.zero) {
                 enemy.fleePosition = GetFleePosition();
             } else {
@@ -68,11 +73,13 @@ public class FleeState : State {
         }
 
         
+        /*
         fleeTimer += Time.deltaTime;
         if (fleeTimer >= fleeTime * enemy.currentEnergyT) {
             energyT = Mathf.Lerp(energyT, enemy.currentEnergyT, 0.1f);
             currentSpeed *= energyT;
         }
+        */
         currentSpeed =  Mathf.Clamp(currentSpeed, maxSpeed * 0.4f, maxSpeed);
 
         //Move
@@ -118,7 +125,8 @@ public class FleeState : State {
             if (Vector3.Distance(playerPos, fleePos) < 3f) continue;
             if(oldFleePos != Vector3.zero) {
                 //zu weit auseinander
-                if (Vector3.Distance(fleePos, oldFleePos) > 5f) continue;
+                if (Vector3.Distance(fleePos, oldFleePos) > 15f) continue;
+                if (Vector3.Distance(fleePos, oldFleePos) < 5f) continue;
                 //fleePos näher als vorher
                 if (Vector3.Distance(playerPos, fleePos) < Vector3.Distance(playerPos, oldFleePos)) continue;
             }

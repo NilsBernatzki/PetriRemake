@@ -45,16 +45,21 @@ public class MovePlayer : MonoBehaviour {
     private Quaternion boostTextRotation;
 
     [Header("Snack")]
+    [SerializeField]
+    private DrawLine drawLine;
     public float snackAngle;
     public bool snackCooldown;
-    private float snackBoostTimer;
     public float snackBoostTime;
     public Enemy closestEnemy;
-
+    public bool grabbedEnemy;
+    private Vector3 nullPos;
+   
     // Use this for initialization
     void Start () {
         rig = GetComponent<Rigidbody2D>();
         player = GetComponent<Player>();
+        nullPos = GameManager.singleton.transform.GetChild(0).position;
+        
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
         boostTextRotation = boostText.transform.rotation;
         fullCol = spriteRenderer.color;
@@ -67,26 +72,34 @@ public class MovePlayer : MonoBehaviour {
         if (player.dead) return;
         UpdateEnergy();
         UpdateBehavior();
+        if (player.playerDamaged) return;
 
-        closestEnemy = null;
-        if (Input.GetButton("Fire1")) {
+        if (!grabbedEnemy) {
+            drawLine.DrawALine(nullPos, nullPos);
+            closestEnemy = null;
             if (player.enemiesInAngle.Count > 0) {
-                snackBoostTimer += Time.deltaTime;
-                if(snackBoostTimer <= snackBoostTime) {
-                    closestEnemy = player.enemiesInAngle.OrderByDescending(e => Vector3.Distance(e.GetCurrentPosition(), transform.position)).First();
-                    SnackMovement(closestEnemy);
-                } else {
-                    if (!snackCooldown) {
-                        snackCooldown = true;
-                        StartCoroutine(SnackingCooldown());
-                    }
-                }
-
+                closestEnemy = player.enemiesInAngle.OrderByDescending(e => Vector3.Distance(e.GetCurrentPosition(), transform.position)).Reverse().First();
+            }
+        } else {
+            drawLine.DrawALine(transform.position, closestEnemy.transform.position);
+        }
+        if (Input.GetButton("Fire1")) {
+            if (closestEnemy) {
+                closestEnemy.isDead = true;
+                grabbedEnemy = true;
             }
         } 
-        if(closestEnemy == null) {
-            UpdateMovement();
+        if(grabbedEnemy) {
+            closestEnemy.rig.velocity = (transform.position - closestEnemy.transform.position).normalized * 300 * Time.deltaTime;
+            closestEnemy.rig.mass = 0.1f;
         }
+        if(closestEnemy == null) {
+            player.aimCircle.position = nullPos;
+        } else {
+            player.aimCircle.position = closestEnemy.transform.position;
+        }
+
+        UpdateMovement();
         ClampVelocity();
     }
     public void ClampVelocity() {
@@ -95,13 +108,14 @@ public class MovePlayer : MonoBehaviour {
     public void SnackMovement(Enemy e) {
         Vector3 dir = e.transform.position - transform.position;
         Vector3 move = GetMovementVec(dir);
+
+        rig.velocity = move;
         
-        MoveInstance(move*2, true);
-        RotateInstance(move*2);
+        RotateInstance(rig.velocity);
+        
     }
    private IEnumerator SnackingCooldown() {
         yield return new WaitForSeconds(2f);
-        snackBoostTimer = 0;
         snackCooldown = false;
     }
     private void UpdateMovement() {
