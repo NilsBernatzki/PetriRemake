@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Pathfinding;
 using UnityEngine.UI;
+using System.Linq;
 
 public class Player : MonoBehaviour {
 
@@ -32,10 +33,21 @@ public class Player : MonoBehaviour {
     private float maxMeasuredVeloMag;
     public float currentVeloT;
 
+    
 
+    [Header("Snack")]
+    public float snackAngle;
+    private MovePlayer movement;
+    public List<Enemy> closeEnemies = new List<Enemy>();
+    public List<Enemy> enemiesInAngle = new List<Enemy>();
+    public bool snacking;
+
+    public bool playerDamaged;
     // Use this for initialization
     void Start () {
         rig = GetComponent<Rigidbody2D>();
+        movement = GetComponent<MovePlayer>();
+
         health = maxHealth;
         healthText.text = health.ToString();
         rig.AddForce(Vector2.down);
@@ -53,10 +65,20 @@ public class Player : MonoBehaviour {
         }
         UpdatePenaltyArea();
         UpdateMaxMeasuredVelo();
-        if (Input.GetKeyDown(KeyCode.D)) {
-            GetDamage(10f);
+
+        enemiesInAngle.Clear();
+        if (closeEnemies.Count > 0) {
+            Vector3 pos = transform.position;
+            foreach (Enemy e in closeEnemies) {
+                if (Quaternion.Angle(transform.rotation, Quaternion.LookRotation(Vector3.forward, e.transform.position - pos)) <= snackAngle) {
+                    enemiesInAngle.Add(e);
+                }
+            }
+
         }
+
     }
+   
     private void FireEventPlayerDied() {
         if(PlayerDied != null) {
             PlayerDied();
@@ -140,7 +162,36 @@ public class Player : MonoBehaviour {
         health = Mathf.Clamp(health, 0, maxHealth);
         healthText.text = Mathf.RoundToInt(health).ToString();
     }
-    public void GetDamage(float damage) {
-        health -= damage;
+    public void GetDamage(float damage, Vector3 hitPoint) {
+        health -= Mathf.Pow(damage,1.5f);
+        rig.AddForce((transform.position - hitPoint).normalized * damage * 100);
+        movement.ClampVelocity();
+        StartCoroutine(RecoverFromDamage());
+    }
+    private IEnumerator RecoverFromDamage() {
+        yield return new WaitForSeconds(0.5f);
+        playerDamaged = false;
+    }
+    private void OnTriggerEnter2D(Collider2D c) {
+        Enemy e = c.transform.parent.GetComponent<Enemy>();
+        if (!closeEnemies.Contains(e)) {
+            closeEnemies.Add(e);
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D c) {
+        Enemy e = c.transform.parent.GetComponent<Enemy>();
+        if (closeEnemies.Contains(e)) {
+            closeEnemies.Remove(e);
+        }
+    }
+    private void OnCollisionEnter2D(Collision2D collision) {
+        if (collision.collider.CompareTag("Enemy")) {
+            Enemy e = collision.collider.transform.parent.GetComponent<Enemy>();
+            if(e == movement.closestEnemy) {
+                e.GetSnacked();
+                movement.closestEnemy = null;
+            }
+        }
     }
 }

@@ -74,13 +74,15 @@ public class Enemy : MonoBehaviour {
     protected SpriteRenderer spriteRenderer;
 
     [Header("Charge")]
-    public float maxChargemin;
-    public float maxChargemax;
-    public float currentMaxCharge;
+    [SerializeField]
+    protected int updateChargeFrameCount;
+    protected int updateChargeFrameCounter;
+
+    public float chargemin;
+    public float chargemax;
     public float currentCharge;
-    public float restoreChargePerSecMin;
-    public float restoreChargePerSecMax;
-    public float currentRestoreChargePerSec;
+
+    public bool charged;
 
     [Header("Detection")]
     [SerializeField]
@@ -117,6 +119,10 @@ public class Enemy : MonoBehaviour {
     [Header("Flee")]
     public Vector3 fleePosition;
 
+    [Space(10)]
+    public bool isDead;
+    public bool snackDebug;
+
     // Use this for initialization
     protected virtual void Start () {
         rig = GetComponent<Rigidbody2D>();
@@ -127,7 +133,6 @@ public class Enemy : MonoBehaviour {
         maxSightAngle /= 2;
         maxVelocity = maxVelocity / 100f;
         currentState = idleState;
-        //currentState = huntState;
 
         currentEnergy = maxEnergy;
         emptyCol = SwarmManager.singleton.emptyEnergyColor;
@@ -138,10 +143,13 @@ public class Enemy : MonoBehaviour {
 	
 	// Update is called once per frame
 	protected virtual void FixedUpdate () {
+        if (isDead) return;
+        
         UpdateCurrentPosition(ref currentPosition);
         CheckForPlayer();
         UpdateEnergy();
         UpdateCharge();
+       
 	}
     public virtual void ChangeBehavior(Behavior newBehavior) {
         
@@ -268,7 +276,9 @@ public class Enemy : MonoBehaviour {
             currentEnergyColor = Color.Lerp(emptyCol, fullCol, t);
             ChangeColor(currentEnergyColor);
         } else {
-            ChangeColor(startCol);
+            if (!SwarmManager.singleton.debugChargeMode && !SwarmManager.singleton.debugGroupsMode) {
+                ChangeColor(startCol);
+            }
         }
     }
 
@@ -282,36 +292,64 @@ public class Enemy : MonoBehaviour {
 
     protected void UpdateCharge() {
 
-        currentMaxCharge = maxChargemin + (((float)groupable.leader.group.Count - 1)/ (float)SwarmManager.singleton.maxGroupSize) * (maxChargemax - maxChargemin);
-        currentRestoreChargePerSec = restoreChargePerSecMin + (((float)groupable.leader.group.Count - 1)/ (float)SwarmManager.singleton.maxGroupSize) * (restoreChargePerSecMax - restoreChargePerSecMin);
+        if (groupable.leader.enemy.charged) {
+            charged = true;
+        } else {
+            charged = false;
+        }
 
-        currentCharge += currentRestoreChargePerSec * Time.deltaTime;
+        updateChargeFrameCounter++;
+        if (!WaitedEnoughFrames(ref updateChargeFrameCounter, updateChargeFrameCount)) return;
 
-        currentCharge = Mathf.Clamp(currentCharge,0, currentMaxCharge);
+        currentCharge = chargemin + (((float)groupable.leader.group.Count - 1) / ((float)SwarmManager.singleton.maxGroupSize -1)) * (chargemax - chargemin);
 
-        float averageCharge = currentCharge;
-        foreach (Groupable g in groupable.neighborsInGroup) {
-            if (g.enemy.GetCurrentBehavior() == GetCurrentBehavior()) {
-                averageCharge += g.enemy.currentCharge;
+        //Debug
+        if (SwarmManager.singleton.debugChargeMode && !SwarmManager.singleton.debugGroupsMode && !SwarmManager.singleton.debugEnergyMode) {
+            if (charged) {
+                ChangeColor(SwarmManager.singleton.chargedColor);
+            } else {
+                ChangeColor(SwarmManager.singleton.unchargedColor);
+            }
+        } else {
+            if(!SwarmManager.singleton.debugGroupsMode && !SwarmManager.singleton.debugEnergyMode) {
+                ChangeColor(startCol);
             }
         }
-        averageCharge /= (groupable.neighbors.Count + 1);
-        currentCharge = Mathf.Lerp(currentCharge, averageCharge, 0.25f);
-
     }
 
     //################ Damage #####################
 
     private void OnCollisionEnter2D(Collision2D collision) {
-        
-        if (collision.collider.CompareTag("Player")) {
-            
-            if(currentBehavior == Behavior.hunt || currentBehavior == Behavior.attack) {
-                float velocityMagT = rig.velocity.magnitude / maxVelocity;
-                float damage = maxDamage * velocityMagT;
-                player.GetDamage(damage);
+
+        if (charged) {
+            if (collision.collider.CompareTag("Player")) {
+                if (!player.playerDamaged) {
+                    player.playerDamaged = true;
+                    groupable.leader.enemy.ShockPlayer(currentCharge, transform.position);
+                }
             }
         }
+    }
+
+    public void ShockPlayer(float charge, Vector3 hitpoint) {
+        player.GetDamage(charge, hitpoint);
+        //Debug.Log("Shock" + "dmg: " + currentCharge);
+        foreach (Groupable g in groupable.group) {
+            g.enemy.charged = false;
+        }
+        
+
+    }
+
+    //################ GetSnacked #################
+
+    public void GetSnacked() {
+        isDead = true;
+        GetComponent<CircleCollider2D>().enabled = false;
+        transform.GetChild(0).GetComponent<CircleCollider2D>().enabled = false;
+        rig.MovePosition(GameManager.singleton.transform.GetChild(0).position);
+        currentState.OnExit();
+        Destroy(this.gameObject, 5f);
     }
     //################ Detection ##################
 

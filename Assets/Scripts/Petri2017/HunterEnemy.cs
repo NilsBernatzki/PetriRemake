@@ -11,6 +11,7 @@ public class HunterEnemy : Enemy {
 	
 	// Update is called once per frame
 	protected override void FixedUpdate () {
+        if (isDead) return;
         base.FixedUpdate();
         currentState.Behave();
         currentState.LateBehave();

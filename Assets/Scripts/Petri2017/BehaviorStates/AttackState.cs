@@ -17,7 +17,10 @@ public class AttackState : State {
         if (enemy == null) return;
         base.Behave();
         //Debug.Log("attack");
-        
+       
+        if (!enemy.charged) {
+            enemy.ChangeBehavior(Behavior.flee);
+        }
 
         if (enemy.playerInSight && Vector3.Distance(playerTransform.position, currentPosition) <= enemy.nonPathHuntDist) {
             if (enemy.currentEnergy == 0) {

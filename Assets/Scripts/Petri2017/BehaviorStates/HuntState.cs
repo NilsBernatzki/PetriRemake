@@ -26,16 +26,17 @@ public class HuntState : State {
         if (enemy == null) return;
         base.Behave();
         //Debug.Log("hunt");
+        
         SwarmManager.singleton.playerIsHunted = true;
         if(enemy.playerInSight && Vector3.Distance(playerTransform.position,currentPosition) <= enemy.nonPathHuntDist) {
-            if(groupable.leader.enemy.currentEnergyT <= 0.2) {
+            if(groupable.leader.enemy.currentEnergyT <= 0.2 || !enemy.charged) {
                 enemy.ChangeBehavior(Behavior.flee);
             } else {
                 enemy.ChangeBehavior(Behavior.attack);
             }
             return;
         } else {
-            if(groupable.leader.enemy.currentEnergyT <= 0.2) {
+            if(groupable.leader.enemy.currentEnergyT <= 0.2 || !enemy.charged) {
                 enemy.ChangeBehavior(Behavior.flee);
             }
 

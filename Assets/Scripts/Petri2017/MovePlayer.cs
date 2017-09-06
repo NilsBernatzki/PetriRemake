@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Linq;
 
 public class MovePlayer : MonoBehaviour {
 
@@ -17,7 +18,7 @@ public class MovePlayer : MonoBehaviour {
    
     private float maxRotationAnglesPerFrame = 10f;
     private Rigidbody2D rig;
-
+    private float maxSpeed;
     [Header("Energy")]
     [SerializeField]
     private float maxEnergy;
@@ -43,8 +44,15 @@ public class MovePlayer : MonoBehaviour {
     private Text boostText;
     private Quaternion boostTextRotation;
 
-	// Use this for initialization
-	void Start () {
+    [Header("Snack")]
+    public float snackAngle;
+    public bool snackCooldown;
+    private float snackBoostTimer;
+    public float snackBoostTime;
+    public Enemy closestEnemy;
+
+    // Use this for initialization
+    void Start () {
         rig = GetComponent<Rigidbody2D>();
         player = GetComponent<Player>();
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
@@ -59,7 +67,42 @@ public class MovePlayer : MonoBehaviour {
         if (player.dead) return;
         UpdateEnergy();
         UpdateBehavior();
-        UpdateMovement();
+
+        closestEnemy = null;
+        if (Input.GetButton("Fire1")) {
+            if (player.enemiesInAngle.Count > 0) {
+                snackBoostTimer += Time.deltaTime;
+                if(snackBoostTimer <= snackBoostTime) {
+                    closestEnemy = player.enemiesInAngle.OrderByDescending(e => Vector3.Distance(e.GetCurrentPosition(), transform.position)).First();
+                    SnackMovement(closestEnemy);
+                } else {
+                    if (!snackCooldown) {
+                        snackCooldown = true;
+                        StartCoroutine(SnackingCooldown());
+                    }
+                }
+
+            }
+        } 
+        if(closestEnemy == null) {
+            UpdateMovement();
+        }
+        ClampVelocity();
+    }
+    public void ClampVelocity() {
+        rig.velocity = Vector2.ClampMagnitude(rig.velocity, maxSpeed / (100f * rig.mass));
+    }
+    public void SnackMovement(Enemy e) {
+        Vector3 dir = e.transform.position - transform.position;
+        Vector3 move = GetMovementVec(dir);
+        
+        MoveInstance(move*2, true);
+        RotateInstance(move*2);
+    }
+   private IEnumerator SnackingCooldown() {
+        yield return new WaitForSeconds(2f);
+        snackBoostTimer = 0;
+        snackCooldown = false;
     }
     private void UpdateMovement() {
         Vector2 input = GetDirection();
@@ -87,7 +130,7 @@ public class MovePlayer : MonoBehaviour {
         }
     }
 
-    private Vector2 GetDirection() {
+    public Vector2 GetDirection() {
         Vector2 dir;
         dir.x = Input.GetAxisRaw("Horizontal");
         dir.y = Input.GetAxisRaw("Vertical");
@@ -110,7 +153,6 @@ public class MovePlayer : MonoBehaviour {
     private Vector2 GetMovementVec(Vector2 dir) {
         Vector2 move;
         float currentSpeed;
-        float maxSpeed;
 
         switch (currentBehavior) {
             case PlayerBehavior.boost:
@@ -128,10 +170,13 @@ public class MovePlayer : MonoBehaviour {
         }
         
         move = dir.normalized * currentSpeed * GameManager.singleton.gameSpeedMult * Time.fixedDeltaTime;
-        rig.velocity = Vector2.ClampMagnitude(rig.velocity,maxSpeed/(100f * rig.mass));
+        //rig.velocity = Vector2.ClampMagnitude(rig.velocity,maxSpeed/(100f * rig.mass));
         
         return move;
     }
+
+   
+
     private void UpdateEnergy() {
         switch (currentBehavior) {
             case PlayerBehavior.normal:

@@ -50,6 +50,10 @@ public class SwarmManager : MonoBehaviour {
     [Space(5)]
     public bool playerIsHunted;
     public bool playerMadeEnemysFlee;
+    [Space(5)]
+    public bool debugChargeMode;
+    public Color chargedColor;
+    public Color unchargedColor;
 
     private void Awake() {
         singleton = this;

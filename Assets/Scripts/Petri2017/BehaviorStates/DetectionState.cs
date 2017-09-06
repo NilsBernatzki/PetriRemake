@@ -41,6 +41,8 @@ public class DetectionState : State {
                 return;
         }
 
+       
+
         if (groupable.IsLeader()) {
             enemy.lastKnownPlayerPos = GetLastKnownPlayerPos();
         }
@@ -55,15 +57,17 @@ public class DetectionState : State {
         playerVeloT = Mathf.Clamp(playerVeloT, 0.2f, 1);
 
         firstDetectionTimer += Time.deltaTime;
-        float minT = Mathf.Clamp(playerVeloT * distanceT, 0.25f, 1);
+        float minT = Mathf.Clamp(playerVeloT * distanceT, 0.5f, 1);
         if (firstDetectionTimer >= firstDetectionTime * minT) {
             firstDetectionTimer = 0;
 
+            groupable.leader.enemy.charged = true;
+
             //Chose Behavior
             float tGroup = (float)groupable.leader.group.Count / (float)SwarmManager.singleton.currentMaxGroupSize;
-            float tRandom = tGroup * Random.Range(tGroup, 1);
+            //float tRandom = tGroup * Random.Range(tGroup, 1);
             
-            if (tRandom >= Random.Range(0f,1f)) {
+            if (tGroup >= Random.Range(0.25f,1f)) {
                 if (enemy.playerInSight) {
                     groupable.leader.enemy.ChangeBehavior(Behavior.hunt);
                 } else {
@@ -108,7 +112,7 @@ public class DetectionState : State {
         }
         enemy.wallHackActive = false;
     }
-
+    
     public override void OnEnter() {
         if(groupable.leader.id != groupable.id) {
             groupable.leader.enemy.ChangeBehavior(Behavior.detection);

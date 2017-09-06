@@ -243,14 +243,14 @@ public class Groupable : MonoBehaviour {
     //############# Debug ##################
 
     private void DebugGroup() {
-        if (SwarmManager.singleton.debugGroupsMode && !SwarmManager.singleton.debugEnergyMode) {
+        if (SwarmManager.singleton.debugGroupsMode && !SwarmManager.singleton.debugEnergyMode && !SwarmManager.singleton.debugChargeMode) {
             if (leader == this) {
                 ChangeColor(leaderColor);
             } else {
                 ChangeColor(leader.inGroupColor);
             }
         } else {
-            if (!SwarmManager.singleton.debugEnergyMode) {
+            if (!SwarmManager.singleton.debugEnergyMode && !SwarmManager.singleton.debugChargeMode) {
                 ChangeColor(startCol);
             }
         }

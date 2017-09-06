@@ -37,6 +37,8 @@ public class IdleState : State {
             SearchNewPath(currentPosition, enemy.currentDestination);
         }
 
+        enemy.charged = false;
+
         movement.MoveOnPath(enemy.path, enemy.currentWaypointIndex, speed);
         UpdateWaypointIndex();
     }

@@ -32,6 +32,7 @@ public class FleeState : State {
         if (enemy == null) return;
         base.Behave();
         //Debug.Log("flee");
+        
         SwarmManager.singleton.playerMadeEnemysFlee = true;
         //Range quit
         Vector3 leaderPos = groupable.leader.enemy.GetCurrentPosition();
