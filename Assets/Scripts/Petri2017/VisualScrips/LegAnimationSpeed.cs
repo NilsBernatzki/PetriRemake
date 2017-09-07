@@ -16,8 +16,8 @@ public class LegAnimationSpeed : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         float speed = rig2D.velocity.magnitude + 0.2f;
-        if (speed >= 3) {
-            speed = 3;
+        if (speed >= 4) {
+            speed = 4;
             }
         animator.speed = speed;
 	}
