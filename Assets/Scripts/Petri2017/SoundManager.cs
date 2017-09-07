@@ -38,7 +38,7 @@ public class SoundManager : MonoBehaviour {
             collisionWithGlassAudioSource.PlayOneShot(collisionWithGlassAudioSource.clip, playerVelo);
         } else {
             collisionWithObstacleAudioSource.pitch = Random.Range(0.45f, 0.55f) + (0.3f * playerVelo);
-            collisionWithObstacleAudioSource.PlayOneShot(collisionWithObstacleAudioSource.clip, 0.1f * playerVelo);
+            collisionWithObstacleAudioSource.PlayOneShot(collisionWithObstacleAudioSource.clip,playerVelo);
         }
     }
 }
