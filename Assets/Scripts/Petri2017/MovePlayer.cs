@@ -71,8 +71,12 @@ public class MovePlayer : MonoBehaviour {
 	// Update is called once per frame
 	void FixedUpdate () {
         UpdateBoostCanvas();
-        if (player.dead) return;
-        UpdateEnergy();
+        if (player.dead) {
+            player.aimCircle.position = nullPos;
+            drawLine.DrawALine(nullPos, nullPos);
+            return;
+        }
+            UpdateEnergy();
 
         UpdateBehavior();
         if (player.playerDamaged) {
