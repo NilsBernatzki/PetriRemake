@@ -5,7 +5,6 @@ Shader "Player"
 	Properties
 	{
 		[HideInInspector] __dirty( "", Int ) = 1
-		_MaskClipValue( "Mask Clip Value", Float ) = 0.5
 		_Petri_Actors_normal("Petri_Actors_normal", 2D) = "bump" {}
 		_Petri_Actors_basecolor("Petri_Actors_basecolor", 2D) = "white" {}
 		_Petri_Actors_Emissive("Petri_Actors_Emissive", 2D) = "white" {}
@@ -14,7 +13,7 @@ Shader "Player"
 
 	SubShader
 	{
-		Tags{ "RenderType" = "Transparent"  "Queue" = "Geometry+0" "IsEmissive" = "true"  }
+		Tags{ "RenderType" = "Transparent"  "Queue" = "Transparent+0" "IgnoreProjector" = "True" "IsEmissive" = "true"  }
 		Cull Back
 		CGINCLUDE
 		#include "UnityPBSLighting.cginc"
@@ -31,7 +30,6 @@ Shader "Player"
 		uniform float4 _Petri_Actors_basecolor_ST;
 		uniform sampler2D _Petri_Actors_Emissive;
 		uniform float4 _Petri_Actors_Emissive_ST;
-		uniform float _MaskClipValue = 0.5;
 
 		void surf( Input i , inout SurfaceOutputStandard o )
 		{
@@ -47,7 +45,7 @@ Shader "Player"
 
 		ENDCG
 		CGPROGRAM
-		#pragma surface surf Standard keepalpha fullforwardshadows 
+		#pragma surface surf Standard alpha:fade keepalpha fullforwardshadows 
 
 		ENDCG
 		Pass
@@ -129,14 +127,15 @@ Shader "Player"
 }
 /*ASEBEGIN
 Version=13101
--2366;35;2359;1364;905.9711;-544.7488;1.6;True;False
-Node;AmplifyShaderEditor.SamplerNode;3;230.0074,1138.459;Float;True;Property;_Petri_Actors_normal;Petri_Actors_normal;1;0;Assets/Textures/Player/Petri_Actors_normal.png;True;0;True;bump;Auto;True;Object;-1;Auto;Texture2D;6;0;SAMPLER2D;;False;1;FLOAT2;0,0;False;2;FLOAT;0.0;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1.0;False;5;FLOAT3;FLOAT;FLOAT;FLOAT;FLOAT
-Node;AmplifyShaderEditor.SamplerNode;5;227.5515,930.7844;Float;True;Property;_Petri_Actors_basecolor;Petri_Actors_basecolor;2;0;Assets/Textures/Player/Petri_Actors_basecolor.png;True;0;False;white;Auto;False;Object;-1;Auto;Texture2D;6;0;SAMPLER2D;;False;1;FLOAT2;0,0;False;2;FLOAT;0.0;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1.0;False;5;FLOAT4;FLOAT;FLOAT;FLOAT;FLOAT
-Node;AmplifyShaderEditor.SamplerNode;6;230.0355,1356.94;Float;True;Property;_Petri_Actors_Emissive;Petri_Actors_Emissive;3;0;Assets/Textures/Player/Petri_Actors_Emissive.png;True;0;False;white;Auto;False;Object;-1;Auto;Texture2D;6;0;SAMPLER2D;;False;1;FLOAT2;0,0;False;2;FLOAT;0.0;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1.0;False;5;FLOAT4;FLOAT;FLOAT;FLOAT;FLOAT
-Node;AmplifyShaderEditor.StandardSurfaceOutputNode;0;2060.466,985.963;Float;False;True;2;Float;ASEMaterialInspector;0;0;Standard;Player;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;Back;0;0;False;0;0;Custom;0.5;True;True;0;True;Transparent;Geometry;All;True;True;True;True;True;True;True;True;True;True;True;True;True;True;True;True;True;False;0;255;255;0;0;0;0;False;0;4;10;25;False;0.5;True;0;Zero;Zero;0;Zero;Zero;Add;Add;0;False;0;0,0,0,0;VertexOffset;False;Cylindrical;False;Relative;0;;0;-1;-1;-1;0;0;15;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;2;FLOAT3;0,0,0;False;3;FLOAT;0.0;False;4;FLOAT;0.0;False;5;FLOAT;0.0;False;6;FLOAT3;0,0,0;False;7;FLOAT3;0,0,0;False;8;FLOAT;0.0;False;9;FLOAT;0.0;False;10;OBJECT;0.0;False;11;FLOAT3;0,0,0;False;12;FLOAT3;0,0,0;False;14;FLOAT4;0,0,0,0;False;15;FLOAT3;0,0,0;False;0
+-2366;35;2359;1364;-92.82074;-579.0116;1;True;False
+Node;AmplifyShaderEditor.SamplerNode;6;230.0355,1356.94;Float;True;Property;_Petri_Actors_Emissive;Petri_Actors_Emissive;2;0;Assets/Textures/Player/Petri_Actors_Emissive.png;True;0;False;white;Auto;False;Object;-1;Auto;Texture2D;6;0;SAMPLER2D;;False;1;FLOAT2;0,0;False;2;FLOAT;0.0;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1.0;False;5;FLOAT4;FLOAT;FLOAT;FLOAT;FLOAT
+Node;AmplifyShaderEditor.SamplerNode;5;227.5515,930.7844;Float;True;Property;_Petri_Actors_basecolor;Petri_Actors_basecolor;1;0;Assets/Textures/Player/Petri_Actors_basecolor.png;True;0;False;white;Auto;False;Object;-1;Auto;Texture2D;6;0;SAMPLER2D;;False;1;FLOAT2;0,0;False;2;FLOAT;0.0;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1.0;False;5;FLOAT4;FLOAT;FLOAT;FLOAT;FLOAT
+Node;AmplifyShaderEditor.SamplerNode;3;230.0074,1138.459;Float;True;Property;_Petri_Actors_normal;Petri_Actors_normal;0;0;Assets/Textures/Player/Petri_Actors_normal.png;True;0;True;bump;Auto;True;Object;-1;Auto;Texture2D;6;0;SAMPLER2D;;False;1;FLOAT2;0,0;False;2;FLOAT;0.0;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1.0;False;5;FLOAT3;FLOAT;FLOAT;FLOAT;FLOAT
+Node;AmplifyShaderEditor.StandardSurfaceOutputNode;0;1961.466,983.963;Float;False;True;2;Float;ASEMaterialInspector;0;0;Standard;Player;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;False;False;Back;0;0;False;0;0;Transparent;0.5;True;True;0;True;Transparent;Transparent;All;True;True;True;True;True;True;True;True;True;True;True;True;True;True;True;True;True;False;0;255;255;0;0;0;0;False;0;4;10;25;False;0.5;True;0;Zero;Zero;0;Zero;Zero;Add;Add;0;False;0;0,0,0,0;VertexOffset;False;Cylindrical;False;Relative;0;;0;-1;-1;-1;0;0;15;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;2;FLOAT3;0,0,0;False;3;FLOAT;0.0;False;4;FLOAT;0.0;False;5;FLOAT;0.0;False;6;FLOAT3;0,0,0;False;7;FLOAT3;0,0,0;False;8;FLOAT;0.0;False;9;FLOAT;0.0;False;10;OBJECT;0.0;False;11;FLOAT3;0,0,0;False;12;FLOAT3;0,0,0;False;14;FLOAT4;0,0,0,0;False;15;FLOAT3;0,0,0;False;0
 WireConnection;0;0;5;0
 WireConnection;0;1;3;0
 WireConnection;0;2;6;0
 WireConnection;0;9;5;4
+WireConnection;0;10;5;4
 ASEEND*/
-//CHKSM=86B239D28971E75627B4FC481EDC2C9AB27C2EF7
+//CHKSM=F6E5DF59F1C6F10C26D66589E9F8BA5CD0A9F841
