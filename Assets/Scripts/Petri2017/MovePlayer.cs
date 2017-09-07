@@ -152,7 +152,7 @@ public class MovePlayer : MonoBehaviour {
 
         if (grabbedEnemy && closestEnemy) {
             Vector3 towards = closestEnemy.transform.position - transform.position;
-            float rotSpeed = maxRotationAnglesPerFrame;
+            //float rotSpeed = maxRotationAnglesPerFrame;
             
             //rig.rotation = Quaternion.RotateTowards(Quaternion.Euler(0, 0, rig.rotation), Quaternion.LookRotation(Vector3.forward, towards), maxRotationAnglesPerFrame).eulerAngles.z;
             rig.rotation = Mathf.Lerp(rig.rotation,Quaternion.RotateTowards(Quaternion.Euler(0, 0, rig.rotation), Quaternion.LookRotation(Vector3.forward, towards), maxRotationAnglesPerFrame).eulerAngles.z,0.25f);
