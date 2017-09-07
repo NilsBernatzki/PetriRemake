@@ -47,6 +47,8 @@ public class MovePlayer : MonoBehaviour {
     [Header("Snack")]
     [SerializeField]
     private DrawLine drawLine;
+    [SerializeField]
+    private Transform tongueTransform;
     public float snackAngle;
     public bool snackCooldown;
     public float snackBoostTime;
@@ -71,22 +73,39 @@ public class MovePlayer : MonoBehaviour {
         UpdateBoostCanvas();
         if (player.dead) return;
         UpdateEnergy();
-        UpdateBehavior();
-        if (player.playerDamaged) return;
 
-        if (!grabbedEnemy) {
+        UpdateBehavior();
+        if (player.playerDamaged) {
+            player.aimCircle.position = nullPos;
+            drawLine.DrawALine(nullPos, nullPos);
+            return;
+        }
+
+        if (!grabbedEnemy ) {
             drawLine.DrawALine(nullPos, nullPos);
             closestEnemy = null;
             if (player.enemiesInAngle.Count > 0) {
                 closestEnemy = player.enemiesInAngle.OrderByDescending(e => Vector3.Distance(e.GetCurrentPosition(), transform.position)).Reverse().First();
             }
         } else {
-            drawLine.DrawALine(transform.position, closestEnemy.transform.position);
+            if (!player.enemiesInAngle.Contains(closestEnemy)) {
+                if(Vector3.Distance(closestEnemy.transform.position,transform.position) > 3) {
+                    closestEnemy.isDead = false;
+                    closestEnemy = null;
+                    grabbedEnemy = false;
+                    return;
+                }
+            }
+            drawLine.DrawALine(tongueTransform.position, closestEnemy.transform.position);
         }
         if (Input.GetButton("Fire1")) {
-            if (closestEnemy) {
-                closestEnemy.isDead = true;
-                grabbedEnemy = true;
+            if (closestEnemy && !closestEnemy.isDead) {
+                if (!snackCooldown) {
+                    closestEnemy.isDead = true;
+                    grabbedEnemy = true;
+                    snackCooldown = true;
+                    StartCoroutine(SnackingCooldown());
+                }
             }
         } 
         if(grabbedEnemy) {
@@ -115,7 +134,7 @@ public class MovePlayer : MonoBehaviour {
         
     }
    private IEnumerator SnackingCooldown() {
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(1f);
         snackCooldown = false;
     }
     private void UpdateMovement() {
@@ -126,6 +145,15 @@ public class MovePlayer : MonoBehaviour {
         }
     }
     private void RotateInstance(Vector2 input) {
+
+        if (grabbedEnemy && closestEnemy) {
+            Vector3 towards = closestEnemy.transform.position - transform.position;
+            float rotSpeed = maxRotationAnglesPerFrame;
+            
+            //rig.rotation = Quaternion.RotateTowards(Quaternion.Euler(0, 0, rig.rotation), Quaternion.LookRotation(Vector3.forward, towards), maxRotationAnglesPerFrame).eulerAngles.z;
+            rig.rotation = Mathf.Lerp(rig.rotation,Quaternion.RotateTowards(Quaternion.Euler(0, 0, rig.rotation), Quaternion.LookRotation(Vector3.forward, towards), maxRotationAnglesPerFrame).eulerAngles.z,0.25f);
+            return;
+        }
 
         if(rig.velocity != Vector2.zero) {
             Vector3 towards = (Vector3)rig.velocity;
@@ -215,11 +243,13 @@ public class MovePlayer : MonoBehaviour {
             }
            
         }
+        
         if (!boostBlocked) {
-            spriteRenderer.color = Color.Lerp(emptyCol, fullCol, currentEnergy / maxEnergy);
+            //spriteRenderer.color = Color.Lerp(emptyCol, fullCol, currentEnergy / maxEnergy);
         } else {
-            spriteRenderer.color = blockedCol;
+            //spriteRenderer.color = blockedCol;
         }
+        
     }
     private IEnumerator UnlockBoost() {
 

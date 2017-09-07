@@ -73,9 +73,12 @@ public class Player : MonoBehaviour {
         if (closeEnemies.Count > 0) {
             Vector3 pos = transform.position;
             foreach (Enemy e in closeEnemies) {
-                if (Quaternion.Angle(transform.rotation, Quaternion.LookRotation(Vector3.forward, e.transform.position - pos)) <= snackAngle) {
-                    enemiesInAngle.Add(e);
+                if (e) {
+                    if (Quaternion.Angle(transform.rotation, Quaternion.LookRotation(Vector3.forward, e.transform.position - pos)) <= snackAngle) {
+                        enemiesInAngle.Add(e);
+                    }
                 }
+                
             }
 
         }
