@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 7cff12755eaa17d49a6db3970bdc69e2
+timeCreated: 1504718471
+licenseType: Free
+ShaderImporter:
+  defaultTextures:
+  - _Petri_Actors_normal: {fileID: 2800000, guid: 4b25949d48ed1d7409d4fe95dd0648fb,
+      type: 3}
+  - _Petri_Actors_basecolor: {fileID: 2800000, guid: bd2602c488799274e90ce560f6a50f8a,
+      type: 3}
+  - _Petri_Actors_Emissive: {fileID: 2800000, guid: 7121ec8034c865e4b86fc812b6852baa,
+      type: 3}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
