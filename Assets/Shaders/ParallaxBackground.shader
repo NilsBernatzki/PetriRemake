@@ -148,7 +148,7 @@ Shader "ParallaxBackground"
 }
 /*ASEBEGIN
 Version=13101
--2366;35;2359;1364;1694.116;171.1071;1;True;True
+-2366;35;2359;1364;4139.242;850.1852;1.993782;True;False
 Node;AmplifyShaderEditor.Vector2Node;102;-4009.302,-135.4948;Float;False;Constant;_Vector0;Vector 0;6;0;2,2;0;3;FLOAT2;FLOAT;FLOAT
 Node;AmplifyShaderEditor.TextureCoordinatesNode;100;-3800.302,-135.4948;Float;False;0;-1;2;3;2;SAMPLER2D;;False;0;FLOAT2;1,1;False;1;FLOAT2;0,0;False;5;FLOAT2;FLOAT;FLOAT;FLOAT;FLOAT
 Node;AmplifyShaderEditor.OneMinusNode;101;-3516.302,305.5052;Float;True;1;0;FLOAT2;0.0;False;1;FLOAT2
@@ -201,7 +201,7 @@ Node;AmplifyShaderEditor.SimpleMultiplyOpNode;77;-848.8974,519.6844;Float;False;
 Node;AmplifyShaderEditor.RangedFloatNode;121;-820.1162,809.8929;Float;False;Constant;_Offset2;Offset2;6;0;0.2;0;0;0;1;FLOAT
 Node;AmplifyShaderEditor.RangedFloatNode;119;-873.2268,228.3947;Float;False;Constant;_Offset;Offset;6;0;1.98;0;0;0;1;FLOAT
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode;82;-939.0989,1316.883;Float;False;2;2;0;FLOAT3;0.0;False;1;FLOAT;0.0,0,0;False;1;FLOAT3
-Node;AmplifyShaderEditor.SimpleAddOpNode;117;-695.2268,-202.6053;Float;False;2;2;0;FLOAT3;0.0;False;1;FLOAT;0.0;False;1;FLOAT3
+Node;AmplifyShaderEditor.SimpleAddOpNode;117;-695.2268,-202.6053;Float;False;2;2;0;FLOAT3;0.0;False;1;FLOAT;0.0,0,0;False;1;FLOAT3
 Node;AmplifyShaderEditor.SimpleAddOpNode;120;-700.1162,563.8929;Float;False;2;2;0;FLOAT3;0.0;False;1;FLOAT;0,0,0;False;1;FLOAT3
 Node;AmplifyShaderEditor.RangedFloatNode;61;-613.2944,-538.8972;Float;False;Constant;_Float5;Float 5;2;0;10;0;0;0;1;FLOAT
 Node;AmplifyShaderEditor.RangedFloatNode;52;-569.3997,339.5993;Float;False;Constant;_Float5;Float 5;2;0;10;0;0;0;1;FLOAT
@@ -219,7 +219,7 @@ Node;AmplifyShaderEditor.SimpleAddOpNode;51;-39.2981,112.0991;Float;False;3;3;0;
 Node;AmplifyShaderEditor.SimpleDivideOpNode;47;188.202,-373.0005;Float;False;2;0;FLOAT4;0.0;False;1;FLOAT;0,0,0,0;False;1;FLOAT4
 Node;AmplifyShaderEditor.AbsOpNode;113;449.7732,-353.6053;Float;False;1;0;FLOAT4;0.0;False;1;FLOAT4
 Node;AmplifyShaderEditor.SimpleDivideOpNode;49;339.7019,108.0991;Float;False;2;0;FLOAT;0.0;False;1;FLOAT;0,0,0,0;False;1;FLOAT
-Node;AmplifyShaderEditor.StandardSurfaceOutputNode;0;1005.201,-416.8992;Float;False;True;2;Float;ASEMaterialInspector;0;0;Standard;ParallaxBackground;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;False;False;Back;0;0;False;0;0;Transparent;0.5;True;True;0;False;Transparent;Transparent;All;True;True;True;True;True;True;True;True;True;True;True;True;True;True;True;True;True;False;0;255;255;0;0;0;0;False;0;4;10;25;False;0.5;True;0;Zero;Zero;0;Zero;Zero;Add;Add;0;False;0;0,0,0,0;VertexOffset;False;Cylindrical;False;Relative;0;;-1;-1;-1;-1;0;0;15;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;2;FLOAT3;0,0,0;False;3;FLOAT;0.0;False;4;FLOAT;0.0;False;5;FLOAT;0.0;False;6;FLOAT3;0,0,0;False;7;FLOAT3;0,0,0;False;8;FLOAT;0.0;False;9;FLOAT;0.0;False;10;OBJECT;0.0;False;11;FLOAT3;0,0,0;False;12;FLOAT3;0,0,0;False;14;FLOAT4;0,0,0,0;False;15;FLOAT3;0,0,0;False;0
+Node;AmplifyShaderEditor.StandardSurfaceOutputNode;0;1005.201,-416.8992;Float;False;True;2;Float;ASEMaterialInspector;0;0;Standard;ParallaxBackground;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;False;False;Back;0;0;False;0;0;Transparent;0.5;True;True;0;False;Transparent;Transparent;All;True;True;True;True;True;True;True;True;True;True;True;True;True;True;True;True;True;False;0;255;255;0;0;0;0;False;0;4;10;25;False;0.5;True;0;Zero;Zero;0;Zero;Zero;Add;Add;0;False;0;0,0,0,0;VertexOffset;False;Cylindrical;False;Relative;0;;1;-1;-1;-1;0;0;15;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;2;FLOAT3;0,0,0;False;3;FLOAT;0.0;False;4;FLOAT;0.0;False;5;FLOAT;0.0;False;6;FLOAT3;0,0,0;False;7;FLOAT3;0,0,0;False;8;FLOAT;0.0;False;9;FLOAT;0.0;False;10;OBJECT;0.0;False;11;FLOAT3;0,0,0;False;12;FLOAT3;0,0,0;False;14;FLOAT4;0,0,0,0;False;15;FLOAT3;0,0,0;False;0
 WireConnection;100;0;102;0
 WireConnection;101;0;100;0
 WireConnection;97;0;101;0
@@ -308,4 +308,4 @@ WireConnection;49;1;50;0
 WireConnection;0;0;113;0
 WireConnection;0;9;49;0
 ASEEND*/
-//CHKSM=269A33B130A74D086604FD5E3C3196C0A479B7B2
+//CHKSM=CE542DA9484FEA2E95DC3C0B0CF059D2A8E4904F

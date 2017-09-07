@@ -1,0 +1,11 @@
+fileFormatVersion: 2
+guid: e63e3e87f3b165f4d965db5b4208f0c9
+timeCreated: 1504787187
+licenseType: Free
+ShaderImporter:
+  defaultTextures:
+  - _Petri_Actors_RimNormal: {fileID: 2800000, guid: c8e9c7e1297a4b94aa995a8eff511ca8,
+      type: 3}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
