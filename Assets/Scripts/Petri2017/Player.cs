@@ -8,7 +8,7 @@ using System.Linq;
 public class Player : MonoBehaviour {
 
     public event System.Action PlayerDied;
-
+    public event System.Action<string> CollisionWithEnvironment;
     private Rigidbody2D rig;
     public Vector3 boundsSize;
 
@@ -238,6 +238,12 @@ public class Player : MonoBehaviour {
                 movement.closestEnemy = null;
                 movement.grabbedEnemy = false;
             }
+            return;
+        }
+        
+        //Collision mit Umgebung
+        if(CollisionWithEnvironment != null) {
+            CollisionWithEnvironment(collision.collider.tag);
         }
     }
 }
