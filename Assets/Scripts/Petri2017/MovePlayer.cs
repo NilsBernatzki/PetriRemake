@@ -268,8 +268,9 @@ public class MovePlayer : MonoBehaviour {
         } else {
             boostText.color = fullCol;
         }
-        Vector3 boostTextPos = transform.position - (transform.up * 0.5f);
-        boostText.transform.position = boostTextPos;
-        boostText.transform.rotation = boostTextRotation;
-    }
+        //Vector3 boostTextPos = transform.position - (transform.up * 2.5f);
+        //boostText.transform.position = boostTextPos;
+        //boostText.transform.rotation = boostTextRotation;
+
+        }
 }
