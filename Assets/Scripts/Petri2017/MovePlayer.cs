@@ -79,7 +79,7 @@ public class MovePlayer : MonoBehaviour {
             UpdateEnergy();
 
         UpdateBehavior();
-        if (player.playerDamaged) {
+        if (player.playerStunned) {
             player.aimCircle.position = nullPos;
             drawLine.DrawALine(nullPos, nullPos);
             return;

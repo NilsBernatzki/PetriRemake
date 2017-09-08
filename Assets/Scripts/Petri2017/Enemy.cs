@@ -327,8 +327,8 @@ public class Enemy : MonoBehaviour {
 
         if (charged) {
             if (collision.collider.CompareTag("Player")) {
-                if (!player.playerDamaged) {
-                    player.playerDamaged = true;
+                if (!player.playerStunned) {
+                    player.playerStunned = true;
                     groupable.leader.enemy.ShockPlayer(currentCharge, transform.position);
                 }
             }

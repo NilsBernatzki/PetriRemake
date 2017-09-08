@@ -18,8 +18,11 @@ public class Player : MonoBehaviour {
     public float health;
     public bool dead;
 
+    public bool heal;
     [SerializeField]
     private float healthRecoverPerSec;
+    public float noDamageTimer;
+    public float noDamageTime;
     public bool getDamageOnTouch;
 
     [SerializeField]
@@ -32,7 +35,7 @@ public class Player : MonoBehaviour {
     private float maxMeasuredVeloMag;
     public float currentVeloT;
 
-
+   
 
     [Header("Snack")]
    
@@ -43,7 +46,7 @@ public class Player : MonoBehaviour {
     public List<Enemy> enemiesInAngle = new List<Enemy>();
     public bool snacking;
 
-    public bool playerDamaged;
+    public bool playerStunned;
     // Use this for initialization
     void Start () {
         rig = GetComponent<Rigidbody2D>();
@@ -197,25 +200,34 @@ public class Player : MonoBehaviour {
         currentVeloT = veloMag / maxMeasuredVeloMag;
     }
     private void UpdateHealth() {
-        if (!dead) {
+
+        noDamageTimer += Time.deltaTime;
+        if(noDamageTimer > noDamageTime) {
+            heal = true;
+        }
+
+        if (!dead && heal) {
             health += healthRecoverPerSec * Time.deltaTime;
         }
         health = Mathf.Clamp(health, 0, maxHealth);
         healthText.text = Mathf.RoundToInt(health).ToString();
     }
     public void GetDamage(float damage, Vector3 hitPoint) {
-        health -= Mathf.Pow(damage,1.5f);
+        health -= Mathf.Pow(damage -1,1.5f);
+        heal = false;
+        noDamageTimer = 0;
         rig.AddForce((transform.position - hitPoint).normalized * damage * 100);
         movement.ClampVelocity();
-        StartCoroutine(RecoverFromDamage(damage));
+        StartCoroutine(RecoverFromStunned(damage));
     }
-    private IEnumerator RecoverFromDamage(float damage) {
+    private IEnumerator RecoverFromStunned(float damage) {
         float dmgT = damage / SwarmManager.singleton.maxGroupSize;
         if (dmgT >= 0.3f) {
             yield return new WaitForSeconds(dmgT*1.5f);
         }
-        playerDamaged = false;
+        playerStunned = false;
     }
+    
     private void OnTriggerEnter2D(Collider2D c) {
         Enemy e = c.transform.parent.GetComponent<Enemy>();
         if (!closeEnemies.Contains(e)) {
