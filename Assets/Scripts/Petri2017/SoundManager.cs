@@ -40,8 +40,10 @@ public class SoundManager : MonoBehaviour {
 	}
 
     private void UpdateAmbientPitchOnPlayerVelocity() {
-        float pitch = 1 + player.currentVeloT;
-        ambientAudioSource.pitch = Mathf.Clamp(pitch, 1f, 2f);
+        if(player.currentVeloT > 0) {
+            float pitch = 1 + player.currentVeloT;
+            ambientAudioSource.pitch = Mathf.Clamp(pitch, 1f, 2f);
+        }
     }
 
     public void ClapSoundOnDamage(float damageT) {
