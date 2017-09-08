@@ -16,6 +16,10 @@ public class SoundManager : MonoBehaviour {
     private AudioSource collisionWithObstacleAudioSource;
     [SerializeField]
     private AudioSource tongueWhipAudioSource;
+    [SerializeField]
+    private AudioSource clapOnDamage;
+    private float clapStartVolume;
+
     // Use this for initialization
     private void Awake() {
         singleton = this;
@@ -25,6 +29,8 @@ public class SoundManager : MonoBehaviour {
         player = PlayerObj.GetComponent<Player>();
 
         player.CollisionWithEnvironment += OnCollisionWithEnvironment;
+
+        clapStartVolume = clapOnDamage.volume;
 
 	}
 	
@@ -36,6 +42,11 @@ public class SoundManager : MonoBehaviour {
     private void UpdateAmbientPitchOnPlayerVelocity() {
         float pitch = 1 + player.currentVeloT;
         ambientAudioSource.pitch = Mathf.Clamp(pitch, 1f, 2f);
+    }
+
+    public void ClapSoundOnDamage(float damageT) {
+        clapOnDamage.volume = clapStartVolume + 0.5f * damageT;
+        clapOnDamage.PlayOneShot(clapOnDamage.clip);
     }
 
     private void OnCollisionWithEnvironment(string tag) {

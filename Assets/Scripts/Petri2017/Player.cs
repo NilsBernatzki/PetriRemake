@@ -35,7 +35,10 @@ public class Player : MonoBehaviour {
     private float maxMeasuredVeloMag;
     public float currentVeloT;
 
-   
+    [SerializeField]
+    private PlayerDmgBoltEffect boltFXfield;
+    [SerializeField]
+    private PlayerDmgBoltEffect boltFXShock;
 
     [Header("Snack")]
    
@@ -223,6 +226,9 @@ public class Player : MonoBehaviour {
     private IEnumerator RecoverFromStunned(float damage) {
         float dmgT = damage / SwarmManager.singleton.maxGroupSize;
         if (dmgT >= 0.3f) {
+            StartCoroutine(boltFXfield.FieldStunEffect(dmgT * 1.5f));
+            StartCoroutine(boltFXShock.ShockBoltEffect(dmgT));
+            SoundManager.singleton.ClapSoundOnDamage(dmgT);
             yield return new WaitForSeconds(dmgT*1.5f);
         }
         playerStunned = false;

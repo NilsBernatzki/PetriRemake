@@ -86,6 +86,9 @@ public class Enemy : MonoBehaviour {
     public float chargeTimer;
     public float chargedTime;
 
+    [SerializeField]
+    private SpriteRenderer glowRenderer;
+
     [Header("Detection")]
     [SerializeField]
     public float detectionMinDistance;
@@ -297,8 +300,10 @@ public class Enemy : MonoBehaviour {
 
         if (groupable.leader.enemy.charged) {
             charged = true;
+            glowRenderer.material.SetColor("_Color", Color.red);
         } else {
             charged = false;
+            glowRenderer.material.SetColor("_Color", Color.gray);
             groupable.leader.enemy.chargeTimer += Time.deltaTime/2;
         }
 

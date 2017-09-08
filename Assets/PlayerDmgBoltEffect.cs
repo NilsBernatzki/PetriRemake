@@ -10,41 +10,44 @@ public class PlayerDmgBoltEffect : MonoBehaviour {
     private float timer;
     public bool isField;
 
-    void Start () {
-        
+    private Player player;
+
+    void Start() {
+
         if (isField == true) {
             fieldScript = GetComponent<LightningFieldScript>();
-            }
-        else {
+        } else {
             boltScript = GetComponent<LightningBoltShapeConeScript>();
-            }
-        
         }
-	
+        player = GameManager.singleton.Player.GetComponent<Player>();
+    }
 
-	void Update () {
-		if (Input.GetKey (KeyCode.Space)) {
-            timer = 2f;
-            if (isField == false) {
-                boltScript.CountRange.Minimum = 5;
-                boltScript.CountRange.Maximum = 15;
-                }
-            }
-        else {
-            if (isField == false) {
-                boltScript.CountRange.Minimum = 0;
-                boltScript.CountRange.Maximum = 0;
-                }          
-            }
-        if (timer >= 0) {
-            timer -= Time.deltaTime;
-            timer = Mathf.Clamp(timer, 0, 2);
-            }
 
-        if (isField == true) {
+    void Update() {
+        if (player.dead && isField) {
             fieldScript.CountRange.Minimum = 0;
-            fieldScript.CountRange.Maximum = Mathf.RoundToInt(timer);
-            }
-
+            fieldScript.CountRange.Maximum = Mathf.RoundToInt(2f);
         }
+    }
+
+    public IEnumerator ShockBoltEffect(float damageT) {
+        boltScript.CountRange.Minimum = Mathf.RoundToInt(5 * damageT);
+        boltScript.CountRange.Maximum = Mathf.RoundToInt(15 * damageT);
+        yield return new WaitForSeconds(0.1f);
+        boltScript.CountRange.Minimum = 0;
+        boltScript.CountRange.Maximum = 0;
+    }
+
+    public IEnumerator FieldStunEffect(float timer) {
+        fieldScript.CountRange.Minimum = 0;
+        fieldScript.CountRange.Maximum = Mathf.RoundToInt(timer);
+        while(timer > 0) {
+            timer -= Time.deltaTime;
+            timer = Mathf.Clamp(timer, 0, 5);
+            fieldScript.CountRange.Maximum = Mathf.RoundToInt(timer);
+            yield return null;
+        }
+        fieldScript.CountRange.Maximum = Mathf.RoundToInt(0);
+    }
+
 }
