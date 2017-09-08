@@ -6,7 +6,7 @@ using UnityEngine.PostProcessing;
 public class PostProcessingAdjusment : MonoBehaviour {
 
     public PostProcessingProfile profile;
-    private float currentHealth;
+    public float currentHealth;
     private Player player;
 
     private void Start() {
@@ -15,7 +15,7 @@ public class PostProcessingAdjusment : MonoBehaviour {
 
     // Update is called once per frame
     void Update () {
-        //currentHealth = player.health
+        currentHealth = player.health;
 		if (profile.vignette.enabled == true) {
             var vignette = profile.vignette.settings;
             vignette.smoothness = 1 - (currentHealth / 100);
