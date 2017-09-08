@@ -15,8 +15,7 @@ public class Player : MonoBehaviour {
     [Header("Health")]
     [SerializeField]
     private float maxHealth;
-    [SerializeField]
-    private float health;
+    public float health;
     public bool dead;
 
     [SerializeField]
@@ -246,4 +245,5 @@ public class Player : MonoBehaviour {
             CollisionWithEnvironment(collision.collider.tag);
         }
     }
+
 }
