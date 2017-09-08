@@ -109,6 +109,7 @@ public class MovePlayer : MonoBehaviour {
                     grabbedEnemy = true;
                     snackCooldown = true;
                     StartCoroutine(SnackingCooldown());
+                    SoundManager.singleton.TongueWhipSound();
                 }
             }
         } 

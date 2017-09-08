@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class SoundManager : MonoBehaviour {
+
+    public static SoundManager singleton;
+
     private GameObject PlayerObj;
     private Player player;
     [SerializeField]
@@ -11,8 +14,12 @@ public class SoundManager : MonoBehaviour {
     private AudioSource collisionWithGlassAudioSource;
     [SerializeField]
     private AudioSource collisionWithObstacleAudioSource;
-
+    [SerializeField]
+    private AudioSource tongueWhipAudioSource;
     // Use this for initialization
+    private void Awake() {
+        singleton = this;
+    }
     void Start () {
         PlayerObj = GameManager.singleton.Player;
         player = PlayerObj.GetComponent<Player>();
@@ -40,5 +47,10 @@ public class SoundManager : MonoBehaviour {
             collisionWithObstacleAudioSource.pitch = Random.Range(0.45f, 0.55f) + (0.3f * playerVelo);
             collisionWithObstacleAudioSource.PlayOneShot(collisionWithObstacleAudioSource.clip,playerVelo);
         }
+    }
+
+    public void TongueWhipSound() {
+        tongueWhipAudioSource.pitch = Random.Range(0.9f, 1.2f);
+        tongueWhipAudioSource.PlayOneShot(tongueWhipAudioSource.clip);
     }
 }
