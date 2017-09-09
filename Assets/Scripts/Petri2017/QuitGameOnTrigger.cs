@@ -21,7 +21,7 @@ public class QuitGameOnTrigger : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if (GameManager.singleton.qiutGame) {
+        if (GameManager.singleton.quitGame) {
             if (!waitForPlayerDeath) {
                 waitForPlayerDeath = true;
                 StartCoroutine(WaitForPlayerDeath());
@@ -32,7 +32,7 @@ public class QuitGameOnTrigger : MonoBehaviour {
         if (selected) {
             levelText.color = selectedTextColor;
             if (Input.GetButtonDown("Fire1")) {
-                GameManager.singleton.qiutGame = true;
+                GameManager.singleton.quitGame = true;
                 StartCoroutine(SwarmManager.singleton.EnemySpawner(12));
             }
         } else {

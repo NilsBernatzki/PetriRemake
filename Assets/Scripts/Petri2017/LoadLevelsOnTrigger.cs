@@ -21,7 +21,7 @@ public class LoadLevelsOnTrigger : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if (GameManager.singleton.qiutGame) return;
+        if (GameManager.singleton.quitGame) return;
         if (selected) {
             levelText.color = selectedTextColor;
             if (Input.GetButtonDown("Fire1")) {

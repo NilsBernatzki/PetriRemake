@@ -1411,6 +1411,10 @@ namespace DigitalRuby.ThunderAndLightning
             }
 
             // clear parent - this ensures that the rotation and scale can be reset before assigning a new parent
+
+            //Nils Code
+            if (!lineRenderer.GameObject) return null;
+
             lineRenderer.GameObject.transform.parent = null;
             lineRenderer.GameObject.transform.rotation = Quaternion.identity;
             lineRenderer.GameObject.transform.localScale = Vector3.one;

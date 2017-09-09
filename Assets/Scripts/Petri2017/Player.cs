@@ -217,7 +217,7 @@ public class Player : MonoBehaviour {
     }
     public void GetDamage(float damage, Vector3 hitPoint) {
 
-        if (GameManager.singleton.qiutGame) {
+        if (GameManager.singleton.quitGame) {
             health = -1f;
             heal = false;
             noDamageTimer = 0;

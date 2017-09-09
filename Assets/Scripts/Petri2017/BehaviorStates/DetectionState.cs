@@ -73,7 +73,7 @@ public class DetectionState : State {
                     groupable.leader.enemy.ChangeBehavior(Behavior.hunt);
                 } 
             } else {
-                if (GameManager.singleton.qiutGame) {
+                if (GameManager.singleton.quitGame) {
                     groupable.leader.enemy.ChangeBehavior(Behavior.hunt);
                     return;
                 }

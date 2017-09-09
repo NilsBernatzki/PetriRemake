@@ -341,7 +341,7 @@ public class Enemy : MonoBehaviour {
     }
 
     public void ShockPlayer(float charge, Vector3 hitpoint) {
-        if (GameManager.singleton.qiutGame) {
+        if (GameManager.singleton.quitGame) {
             player.GetDamage(101f, hitpoint);
         } else {
             player.GetDamage(charge, hitpoint);
