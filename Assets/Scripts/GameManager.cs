@@ -34,7 +34,10 @@ public class GameManager : MonoBehaviour {
     private float timeScalePause;
     [SerializeField]
     private float duration;
-    private Text zoomScaleText;
+
+    public Text zoomScaleText;
+
+    public Text timeText;
 
     void Awake(){
 		singleton = this;
@@ -48,6 +51,7 @@ public class GameManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+        timeText.text = "TIME: " + Time.time.ToString();
         scoreText.text = score.ToString();
 	    if(score > currentState.maxScore) {
             if(stateCounter < gameStates.Count-1) {
