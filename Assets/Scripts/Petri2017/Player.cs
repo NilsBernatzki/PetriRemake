@@ -214,6 +214,21 @@ public class Player : MonoBehaviour {
         }
         health = Mathf.Clamp(health, 0, maxHealth);
         healthText.text = Mathf.RoundToInt(health).ToString();
+
+
+        if (health < 40) {
+            print("under 30");
+            healthText.color = new Vector4(255, 255, 0, 1);
+            }
+
+        if (health >= 40) { 
+
+            healthText.color = Color.green;
+            }
+        if (dead == true) {
+            healthText.text = "DEAD";
+            healthText.color = Color.red;
+            }
     }
     public void GetDamage(float damage, Vector3 hitPoint) {
 
