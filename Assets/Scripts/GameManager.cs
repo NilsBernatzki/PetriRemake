@@ -26,6 +26,16 @@ public class GameManager : MonoBehaviour {
     public GameState currentState;
     public List<GameState> gameStates;
     private int stateCounter = 0;
+
+    [Header("Pause")]
+    public bool pauseMode;
+    public Camera mainCamera;
+    [SerializeField]
+    private float timeScalePause;
+    [SerializeField]
+    private float duration;
+    private Text zoomScaleText;
+
     void Awake(){
 		singleton = this;
         currentState = gameStates[stateCounter];
@@ -45,7 +55,31 @@ public class GameManager : MonoBehaviour {
                 currentState = gameStates[stateCounter];
             }
         }
+        if (Input.GetButtonDown("Start")) {
+            pauseMode = !pauseMode;
+            ChangePauseMode(pauseMode);
+        }
 	}
+
+    private void ChangePauseMode(bool pause) {
+        if (pause) {
+
+            StartCoroutine(ChangeToPauseModeCo());
+        } else {
+            Time.timeScale = 1f;
+            mainCamera.orthographicSize = 5f;
+        }
+    }
+
+    private IEnumerator ChangeToPauseModeCo() {
+        Time.timeScale = timeScalePause;
+        float t = 0;
+        while(t < duration) {
+            t += 0.01f;
+            mainCamera.orthographicSize = Mathf.Lerp(mainCamera.orthographicSize, 15f, t);
+            yield return null;
+        }
+    }
 
     private void OnPlayerDeath() {
         Player.GetComponent<Player>().PlayerDied -= OnPlayerDeath;
