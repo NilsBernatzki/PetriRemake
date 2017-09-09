@@ -217,7 +217,6 @@ public class Player : MonoBehaviour {
 
 
         if (health < 40) {
-            print("under 30");
             healthText.color = new Vector4(255, 255, 0, 1);
             }
 
