@@ -19,7 +19,10 @@ public class SoundManager : MonoBehaviour {
     [SerializeField]
     private AudioSource clapOnDamage;
     private float clapStartVolume;
-
+    [SerializeField]
+    private AudioSource zoomAudioSource;
+    [SerializeField]
+    private List<AudioClip> zoomInoutClips;
     // Use this for initialization
     private void Awake() {
         singleton = this;
@@ -65,5 +68,14 @@ public class SoundManager : MonoBehaviour {
     public void TongueWhipSound() {
         tongueWhipAudioSource.pitch = Random.Range(0.9f, 1.2f);
         tongueWhipAudioSource.PlayOneShot(tongueWhipAudioSource.clip);
+    }
+
+    public void PlayZoomSound(bool inOut) {
+        if (inOut) {
+            zoomAudioSource.PlayOneShot(zoomInoutClips[0]);
+        } else {
+            zoomAudioSource.PlayOneShot(zoomInoutClips[1]);
+        }
+        
     }
 }
