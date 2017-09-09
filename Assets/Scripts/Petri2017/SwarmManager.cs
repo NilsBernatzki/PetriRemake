@@ -21,6 +21,8 @@ public class SwarmManager : MonoBehaviour {
     public static SwarmManager singleton;
     [SerializeField]
     private GameObject enemyPrefab;
+    public GameObject enemyQuitPrefab;
+
     public int maxEnemyCount;
     public int currentEnemyCount;
 
@@ -72,9 +74,7 @@ public class SwarmManager : MonoBehaviour {
         waitSeconds = new WaitForSeconds(1f);
 
         positions = GetComponentsInChildren<Transform>();
-        //StartCoroutine(EnemySpawner(GameManager.singleton.currentState.maxEnemies));
         currentMaxGroupSize = GameManager.singleton.currentState.currentMaxGroupSize;
-        //maxGroupSize = GameManager.singleton.gameStates[GameManager.singleton.gameStates.Count].currentMaxGroupSize;
         maxGroupSize = GameManager.singleton.gameStates.Last().currentMaxGroupSize;
         StartCoroutine(UpdateToCurrentState());
 	}
@@ -86,13 +86,13 @@ public class SwarmManager : MonoBehaviour {
         }
         UpdatePlayerSightings();
 	}
-    private IEnumerator EnemySpawner(int amount) {
+    public IEnumerator EnemySpawner(int amount) {
         yield return new WaitForEndOfFrame();
         for (int i = 0; i < amount; i++) {
-            GameObject enemy = Instantiate(enemyPrefab, (Vector2)positions[Random.Range(0,positions.Length)].position + Random.insideUnitCircle * 2f, Quaternion.identity);
+            GameObject enemy = Instantiate(enemyQuitPrefab, (Vector2)positions[Random.Range(0,positions.Length)].position + Random.insideUnitCircle * 0.25f, Quaternion.identity);
             groupables.Add(enemy.GetComponent<Groupable>());
             currentEnemyCount++;
-            yield return new WaitForSeconds(0.2f);
+            yield return null;
         }
     }
 

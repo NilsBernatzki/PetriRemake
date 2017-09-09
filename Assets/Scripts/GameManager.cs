@@ -14,7 +14,8 @@ public class GameState {
 public class GameManager : MonoBehaviour {
 	
 	public static GameManager singleton;
-
+    public bool qiutGame;
+    public bool goToMenu;
 	public GameObject Player;
     public float gameSpeedMult;
 

@@ -341,7 +341,11 @@ public class Enemy : MonoBehaviour {
     }
 
     public void ShockPlayer(float charge, Vector3 hitpoint) {
-        player.GetDamage(charge, hitpoint);
+        if (GameManager.singleton.qiutGame) {
+            player.GetDamage(101f, hitpoint);
+        } else {
+            player.GetDamage(charge, hitpoint);
+        }
         //Debug.Log("Shock" + "dmg: " + currentCharge);
         foreach (Groupable g in groupable.group) {
             g.enemy.charged = false;

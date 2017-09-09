@@ -216,6 +216,16 @@ public class Player : MonoBehaviour {
         healthText.text = Mathf.RoundToInt(health).ToString();
     }
     public void GetDamage(float damage, Vector3 hitPoint) {
+
+        if (GameManager.singleton.qiutGame) {
+            health = -1f;
+            heal = false;
+            noDamageTimer = 0;
+            rig.AddForce((transform.position - hitPoint).normalized * 1000f);
+            movement.ClampVelocity();
+            StartCoroutine(RecoverFromStunned(damage));
+            return;
+        }
         health -= Mathf.Pow(damage -1,1.5f);
         heal = false;
         noDamageTimer = 0;
