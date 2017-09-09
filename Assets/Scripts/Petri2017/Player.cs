@@ -250,10 +250,10 @@ public class Player : MonoBehaviour {
     private IEnumerator RecoverFromStunned(float damage) {
         float dmgT = damage / SwarmManager.singleton.maxGroupSize;
         if (dmgT >= 0.3f) {
-            StartCoroutine(boltFXfield.FieldStunEffect(dmgT * 1.5f));
+            StartCoroutine(boltFXfield.FieldStunEffect(dmgT * 3.5f));
             StartCoroutine(boltFXShock.ShockBoltEffect(dmgT));
             SoundManager.singleton.ClapSoundOnDamage(dmgT);
-            yield return new WaitForSeconds(dmgT*1.5f);
+            yield return new WaitForSeconds(dmgT*2.5f);
         }
         playerStunned = false;
     }
